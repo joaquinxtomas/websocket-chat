@@ -11,11 +11,22 @@
     </style>
     <title>Document</title>
 </head>
-<body>
-<div id="chat"></div>
-<input type="text" id="message" placeholder="Type your message here...">
-<button onclick="sendMessage()"  class="text-3xl">Send</button>
-
+<body class="flex items-center flex-col justify-center h-screen">
+<h1 class="font-bold pb-3">CHAT</h1>
+<div class="flex items-center justify-center h-140 w-120 bg-gray-200 rounded-lg">
+    <div class="flex flex-col justify-end items-end bg-white rounded-lg shadow-md w-full h-full max-h-[500px] max-w-md mx-auto">
+        <div id="chat" class="text-md w-full"></div>
+        <div class="flex justify-around w-full h-12 bg-green-500 rounded-b-lg">
+            <input class="focus:outline-none bg-white flex-grow mx-0 rounded-bl-lg border-t border-gray-200 p-2"
+                   type="text" id="message"
+                   placeholder="Type your message here...">
+            <button onclick="sendMessage()"
+                    class="rounded-br-lg text-xl w-30 cursor-pointer text-white font-bold hover:bg-green-700 hover:text-gray-200">
+                Send
+            </button>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
@@ -53,14 +64,59 @@
 
     }
 
+    const userColors = [
+        'bg-red-500',
+        'bg-blue-500',
+        'bg-green-500',
+        'bg-yellow-500',
+        'bg-purple-500',
+        'bg-pink-500',
+    ];
+
+    function getUserColor(user){
+        let hash = 0;
+        for (let i = 0; i < user.length; i++){
+            hash = user.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const index = Math.abs(hash) %userColors.length;
+        return userColors[index];
+    }
+
     function showMessage(message){
         var chat = document.getElementById('chat');
         var messageElement = document.createElement('div');
-        messageElement.appendChild(document.createTextNode(message.user + ": " + message.content));
-        chat.appendChild(messageElement);
+        messageElement.classList.add(
+        'p-2',
+        'mb-2',
+        'text-base',
+        'text-gray-800'
+         );
+
+        var dotElement = document.createElement('span');
+        dotElement.classList.add(
+            'rounded-full',
+            'w-2',
+            'h-2',
+            'mr-2',
+            getUserColor(message.user)
+        );
+
+        var userElement = document.createElement('strong');
+        userElement.classList.add('font-bold', 'text-base'); //
+        userElement.textContent = message.user + ": ";
+
+        var contentElement = document.createTextNode(message.content);
+
+        messageElement.appendChild(dotElement);
+        messageElement.appendChild(userElement);
+        messageElement.appendChild(contentElement);
+
+
+        chat.appendChild(messageElement)
     }
 
     connect();
+
 
 </script>
 
